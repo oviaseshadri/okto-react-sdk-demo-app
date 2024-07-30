@@ -3,6 +3,7 @@ import { OktoProvider, BuildType } from 'okto-sdk-react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import HomePage from './HomePage';
+import RawTxnPage from './RawTxnPage';
 
 const OKTO_CLIENT_API_KEY = "";
 function App() {
@@ -13,6 +14,7 @@ function App() {
        <Routes>
          <Route path="/" element={<LoginPage />} />
          <Route path="/home" element={<HomePage />} />
+         <Route path="/raw" element={<RawTxnPage />} />
        </Routes>
      </OktoProvider>
    </Router>

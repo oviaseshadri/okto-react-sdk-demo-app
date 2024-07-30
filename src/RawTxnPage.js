@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useOkto } from "okto-sdk-react";
 import { useNavigate } from "react-router-dom";
-function HomePage() {
-  console.log("HomePage component rendered");
+
+function RawTxnPage() {
+  console.log("raw txn page component rendered");
   const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState(null);
   const [portfolioData, setPortfolioData] = useState(null);
@@ -11,12 +12,10 @@ function HomePage() {
   const [orderResponse, setOrderResponse] = useState(null);
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState(null);
-  const { getUserDetails, getPortfolio, createWallet, transferTokens, orderHistory } = useOkto();
+  const { getUserDetails, getPortfolio, createWallet, executeRawTransaction, getRawTransactionStatus } = useOkto();
   const [transferData, setTransferData] = useState({
     network_name: "",
-    token_address: "",
-    quantity: "",
-    recipient_address: "",
+    transaction: "",
   });
   const [orderData, setOrderData] = useState({
     order_id: "",
@@ -51,19 +50,27 @@ function HomePage() {
     }
   };
 
-  const navRawTxn = async () => {
+  const navHome = async () => {
     try {
       console.log("going to rax txn page");
-      navigate("/raw");
+      navigate("/home");
     } catch (error) {
       setError(`Failed to navigate: ${error.message}`);
     }
   };
 
-  const handleTransferTokens = async (e) => {
+  const handleRawTxnExecute = async (e) => {
+    console.log("handling exe")
     e.preventDefault();
     try {
-      const response = await transferTokens(transferData);
+    console.log("transferData: ",transferData) 
+      const rawData = {
+        network_name : transferData.network_name,
+        transaction: JSON.parse(transferData.transaction)
+      }
+      console.log("rawdata: ",rawData)
+      const response = await executeRawTransaction(rawData);
+      console.log("execting: ")
       setTransferResponse(response);
       setActiveSection('transferResponse');
     } catch (error) {
@@ -78,7 +85,7 @@ function HomePage() {
   const handleOrderCheck = async (e) => {
     e.preventDefault();
     try {
-      const response = await orderHistory(orderData);
+      const response = await getRawTransactionStatus(orderData);
       setOrderResponse(response);
       setActiveSection('orderResponse');
     } catch (error) {
@@ -120,7 +127,7 @@ function HomePage() {
 
   return (
     <div style={containerStyle}>
-      <h1>Home Page</h1>
+      <h1>Raw Transactions</h1>
       
       <div>
         <button style={buttonStyle} onClick={fetchUserDetails}>View User Details</button>
@@ -145,8 +152,8 @@ function HomePage() {
           <pre>{JSON.stringify(wallets, null, 2)}</pre>
         </div>
       )}
-      <h2>Transfer Tokens</h2>
-      <form style={formStyle} onSubmit={handleTransferTokens}>
+      <h2>Perform Raw Txn</h2>
+      <form style={formStyle} onSubmit={handleRawTxnExecute}>
         <input
           style={inputStyle}
           type="text"
@@ -159,35 +166,17 @@ function HomePage() {
         <input
           style={inputStyle}
           type="text"
-          name="token_address"
-          placeholder="Token Address"
-          value={transferData.token_address}
+          name="transaction"
+          placeholder="txn object as json string"
+          value={transferData.transaction}
           onChange={handleInputChange}
           required
         />
-        <input
-          style={inputStyle}
-          type="text"
-          name="quantity"
-          placeholder="Quantity"
-          value={transferData.quantity}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          style={inputStyle}
-          type="text"
-          name="recipient_address"
-          placeholder="Recipient Address"
-          value={transferData.recipient_address}
-          onChange={handleInputChange}
-          required
-        />
-        <button style={buttonStyle} type="submit">Transfer Tokens</button>
+        <button style={buttonStyle} type="submit">Execute Raw Transaction</button>
       </form>
       {activeSection === 'transferResponse' && transferResponse && (
         <div>
-          <h2>Transfer Response:</h2>
+          <h2>Transaction Response:</h2>
           <pre>{JSON.stringify(transferResponse, null, 2)}</pre>
         </div>
       )}
@@ -219,9 +208,11 @@ function HomePage() {
       <div>
         <br/>
         <br/>
-        <button style={buttonStyle} onClick={navRawTxn}>Try Raw Txn</button>
+        <button style={buttonStyle} onClick={navHome}>go to home</button>
       </div>
     </div>
   );
 }
-export default HomePage;
+export default RawTxnPage;
+
+
