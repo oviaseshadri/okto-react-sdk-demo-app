@@ -15,3 +15,6 @@ Set up google cloud console
 1. Google Cloud Console - https://console.cloud.google.com/getting-started?pli=1
 2. https://sdk-docs.okto.tech/guide/google-authentication-setup
 
+
+Cheatsheet to build this project 
+https://docs.google.com/document/d/1ePHrAjiTvLOkBwOaaDvTQlv8qeRu7ATwh7dicnzfK2E/edit?usp=sharing
